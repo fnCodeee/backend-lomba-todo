@@ -18,7 +18,11 @@ const taskSchema = new Schema(
       required: true,
     },
     deadline: {
-      type: Date,
+      type: String,
+      required: true,
+    },
+    startFrom: {
+      type: String,
       required: true,
     },
     isDone: {

@@ -8,7 +8,7 @@ export default {
       const taskAll = await taskModel.find({ userId });
       res.status(200).json({
         success: true,
-        message: "Tugas telah diambil!",
+        message: "Success get task!",
         data: taskAll,
       });
     } catch (error) {
@@ -22,11 +22,19 @@ export default {
 
   async createTask(req, res) {
     try {
-      const { title, category, priority, deadline } = req.body;
-      if (!title || !priority || !deadline) {
+      const { title, category, priority, deadline, startFrom } = req.body;
+      if (!title || !priority || !deadline || !startFrom) {
         return res.status(400).json({
           success: false,
-          message: "Field Required, bre!",
+          message: "Please fill all field!",
+          data: null,
+        });
+      }
+
+      if (new Date(startFrom) > new Date(deadline)) {
+        return res.status(400).json({
+          succses: false,
+          message: "Deadline must be greater than start from",
           data: null,
         });
       }
@@ -36,12 +44,13 @@ export default {
         category,
         priority,
         deadline,
+        startFrom,
         userId: req.user.id,
       });
 
       res.status(200).json({
         success: true,
-        message: "Tugas berhasil ditambahkan!",
+        message: "Success create task!",
         data: newTask,
       });
     } catch (error) {
@@ -53,81 +62,36 @@ export default {
     }
   },
 
-  // update task
-  // async updateTask(req, res) {
-  //   try {
-  //     // get id task form req.params
-  //     // get title, cat, priority, deadline from req.body
-  //     const { id } = req.params;
-  //     const { title, category, priority, deadline } = req.body;
-
-  //     // cek task milik user / sort by userId
-  //     const userId = req.user.id;
-  //     const task = await taskModel.findOne({ _id: id, userId });
-  //     if (!task) {
-  //       return res.status(404).json({
-  //         success: false,
-  //         message: "Tugas tidak ditemukan!",
-  //         data: null,
-  //       });
-  //     }
-  //     // update cuma field yang di kirim, variable uppdate task, fetch with taskModel cari berdasarkan id func and udpdate bawaan mongoose, isi func() : id, object field, { new: true }
-  //     const updateTask = await taskModel.findByIdAndUpdate(
-  //       id,
-  //       { title, category, priority, deadline },
-  //       { new: true },
-  //     );
-
-  //     // if (!updateTask) {
-  //     //   return res.status(404).json({
-  //     //     success: false,
-  //     //     message: "Tugas tidak ditemukan!",
-  //     //     data: null,
-  //     //   });
-  //     // }
-  //     // response status 200, task updated, data: updateTask
-  //     res.status(200).json({
-  //       success: true,
-  //       message: "Tugas berhasil di update!",
-  //       data: updateTask,
-  //     });
-  //   } catch (error) {
-  //     //catch error spti biasa, internal server error
-  //     res.status(500).json({
-  //       success: false,
-  //       message: error.message,
-  //       data: null,
-  //     });
-  //   }
-  // },
-
   async updateTask(req, res) {
     try {
       const { id } = req.params;
-      const { title, category, priority, deadline } = req.body;
+      const { title, category, priority, deadline, startFrom } = req.body;
 
       const userId = req.user.id;
-
-      // ✅ FIX DISINI
       const task = await taskModel.findOne({ _id: id, userId });
+
+      const updateData = {};
+      if (title) updateData.title = title;
+      if (priority) updateData.priority = priority;
+      if (deadline) updateData.deadline = deadline;
+      if (category) updateData.category = category;
+      if (startFrom) updateData.startFrom = startFrom;
 
       if (!task) {
         return res.status(404).json({
           success: false,
-          message: "Tugas tidak ditemukan",
+          message: "Task not found!",
           data: null,
         });
       }
 
-      const updatedTask = await taskModel.findByIdAndUpdate(
-        id,
-        { title, category, priority, deadline },
-        { returnDocument: "after" },
-      );
+      const updatedTask = await taskModel.findByIdAndUpdate(id, updateData, {
+        returnDocument: "after",
+      });
 
       res.status(200).json({
         success: true,
-        message: "Tugas berhasil diupdate!",
+        message: "Success update task!",
         data: updatedTask,
       });
     } catch (error) {
@@ -153,7 +117,7 @@ export default {
       if (!afterMark) {
         return res.status(404).json({
           success: false,
-          message: "Tugas Tidak ditemukan",
+          message: "Task not found!",
           data: null,
         });
       }
@@ -184,14 +148,14 @@ export default {
       if (!deleteTask) {
         return res.status(404).json({
           success: true,
-          message: "Tugas tidak ditemukan!",
+          message: "Task not found!",
           data: null,
         });
       }
 
       res.status(200).json({
         success: true,
-        message: "Tugas berhasil dihapus!",
+        message: "Success delete task!",
         data: null,
       });
     } catch (error) {
