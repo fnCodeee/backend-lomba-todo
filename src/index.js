@@ -3,9 +3,10 @@ import cors from "cors";
 import router from "./routes/api.js";
 import connect from "./utils/database.js";
 import mongoose from "mongoose";
+import { PORT } from "./utils/env.js";
 
 const app = express();
-const port = 3000;
+const port = PORT;
 
 async function init() {
   await connect();

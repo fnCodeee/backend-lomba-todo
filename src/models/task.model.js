@@ -12,17 +12,22 @@ const taskSchema = new Schema(
       type: String,
       default: "General",
     },
+    categoryIcon: {
+      require: true,
+      type: String,
+      default: "globe-alt",
+    },
     priority: {
       type: String,
       enum: ["low", "medium", "high"],
       required: true,
     },
     deadline: {
-      type: String,
+      type: Date,
       required: true,
     },
     startFrom: {
-      type: String,
+      type: Date,
       required: true,
     },
     isDone: {

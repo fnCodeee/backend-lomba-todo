@@ -22,8 +22,21 @@ export default {
 
   async createTask(req, res) {
     try {
-      const { title, category, priority, deadline, startFrom } = req.body;
-      if (!title || !priority || !deadline || !startFrom) {
+      const {
+        title,
+        category,
+        priority,
+        deadline,
+        startFrom,
+        categoryIcon,
+      } = req.body;
+      if (
+        !title ||
+        !priority ||
+        !deadline ||
+        !startFrom ||
+        !categoryIcon
+      ) {
         return res.status(400).json({
           success: false,
           message: "Please fill all field!",
@@ -42,6 +55,7 @@ export default {
       const newTask = await taskModel.create({
         title,
         category,
+        categoryIcon,
         priority,
         deadline,
         startFrom,
@@ -65,7 +79,14 @@ export default {
   async updateTask(req, res) {
     try {
       const { id } = req.params;
-      const { title, category, priority, deadline, startFrom } = req.body;
+      const {
+        title,
+        category,
+        priority,
+        deadline,
+        startFrom,
+        categoryIcon,
+      } = req.body;
 
       const userId = req.user.id;
       const task = await taskModel.findOne({ _id: id, userId });
@@ -76,6 +97,7 @@ export default {
       if (deadline) updateData.deadline = deadline;
       if (category) updateData.category = category;
       if (startFrom) updateData.startFrom = startFrom;
+      if (categoryIcon) updateData.categoryIcon = categoryIcon;
 
       if (!task) {
         return res.status(404).json({
