@@ -26,14 +26,12 @@ export default {
         title,
         category,
         priority,
-        deadline,
         startFrom,
         categoryIcon,
       } = req.body;
       if (
         !title ||
         !priority ||
-        !deadline ||
         !startFrom ||
         !categoryIcon
       ) {
@@ -44,20 +42,19 @@ export default {
         });
       }
 
-      if (new Date(startFrom) > new Date(deadline)) {
-        return res.status(400).json({
-          succses: false,
-          message: "Deadline must be greater than start from",
-          data: null,
-        });
-      }
+      // if (new Date(startFrom) > new Date(deadline)) {
+      //   return res.status(400).json({
+      //     succses: false,
+      //     message: "Deadline must be greater than start from",
+      //     data: null,
+      //   });
+      // }
 
       const newTask = await taskModel.create({
         title,
         category,
         categoryIcon,
         priority,
-        deadline,
         startFrom,
         userId: req.user.id,
       });
@@ -83,7 +80,6 @@ export default {
         title,
         category,
         priority,
-        deadline,
         startFrom,
         categoryIcon,
       } = req.body;
@@ -94,7 +90,6 @@ export default {
       const updateData = {};
       if (title) updateData.title = title;
       if (priority) updateData.priority = priority;
-      if (deadline) updateData.deadline = deadline;
       if (category) updateData.category = category;
       if (startFrom) updateData.startFrom = startFrom;
       if (categoryIcon) updateData.categoryIcon = categoryIcon;
