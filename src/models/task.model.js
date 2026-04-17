@@ -22,10 +22,6 @@ const taskSchema = new Schema(
       enum: ["low", "medium", "high"],
       required: true,
     },
-    deadline: {
-      type: Date,
-      required: true,
-    },
     startFrom: {
       type: Date,
       required: true,
